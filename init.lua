@@ -683,6 +683,7 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {},
+        helm_ls = {},
         yamlls = {
           settings = {
             yaml = {
@@ -773,6 +774,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         go = { 'gofmt' },
+        -- helm = { 'helm-ls' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
