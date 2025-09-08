@@ -109,6 +109,7 @@ vim.o.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
+vim.opt.tabstop = 4
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
@@ -247,7 +248,7 @@ rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+  { 'NMAC427/guess-indent.nvim' }, -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -683,7 +684,34 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {},
-        helm_ls = {},
+        helm_ls = {
+          logLevel = 'info',
+          valuesFiles = {
+            mainValuesFile = 'values.yaml',
+            lintOverlayValuesFile = 'values.lint.yaml',
+            additionalValuesFilesGlobPattern = 'values*.yaml',
+          },
+          helmLint = {
+            enabled = true,
+            ignoredMessages = {},
+          },
+          yamlls = {
+            enabled = true,
+            enabledForFilesGlob = '*.{yaml,yml}',
+            diagnosticsLimit = 50,
+            showDiagnosticsDirectly = false,
+            path = 'yaml-language-server', -- or something like { "node", "yaml-language-server.js" }
+            initTimeoutSeconds = 3,
+            config = {
+              schemas = {
+                kubernetes = 'templates/**',
+              },
+              completion = true,
+              hover = true,
+              -- any other config from https://github.com/redhat-developer/yaml-language-server#language-server-settings
+            },
+          },
+        },
         yamlls = {
           settings = {
             yaml = {
@@ -736,6 +764,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'prettier', -- Used to format javascript code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
     end,
@@ -779,7 +808,8 @@ require('lazy').setup({
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
